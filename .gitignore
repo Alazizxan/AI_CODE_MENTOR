@@ -1,0 +1,14 @@
+# Node.js
+node_modules/
+.env
+.DS_Store
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Next.js
+.next/
+out/
+
+# OS-specific
+Thumbs.db
