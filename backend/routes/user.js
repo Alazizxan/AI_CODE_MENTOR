@@ -55,12 +55,19 @@ router.get("/me", authMiddleware, async (req, res) => {
         (t) => t.courseId.toString() === course._id.toString()
       ).length;
 
+      const totalTasks = course.tasks.length;
+
+      // 🚨 Agar totalTasks = 0 bo‘lsa progress = 0
+      const progressPercent =
+        totalTasks > 0 ? (completed / totalTasks) * 100 : 0;
+
       return {
         _id: course._id,
         title: course.title,
         level: course.level,
-        totalTasks: course.tasks.length,
+        totalTasks,
         completedTasks: completed, // ✅ nechtasi bajarilgan
+        progressPercent, // 🆕 progress ni ham qaytaramiz
       };
     });
 
@@ -83,6 +90,7 @@ router.get("/me", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Server xatosi" });
   }
 });
+
 
 
 

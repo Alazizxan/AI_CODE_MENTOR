@@ -133,7 +133,10 @@ export default function DashboardPage() {
       <div className="bg-white p-4 rounded shadow">
         <h2 className="text-xl font-semibold mb-4">📚 Kurslar Progress</h2>
         {user.courses.map((c: any) => {
-          const percent = (c.completedTasks.length / c.totalTasks) * 100;
+          const percent =
+            c.totalTasks > 0
+              ? (c.completedTasks / c.totalTasks) * 100
+              : 0;
           const badge =
             percent < 25
               ? "🔥 Beginner"
@@ -157,6 +160,24 @@ export default function DashboardPage() {
                   {badge}
                 </span>
               </div>
+              <div className="w-full bg-gray-300 rounded h-4">
+              <div
+                className="bg-green-500 h-4 rounded"
+                style={{
+                  width: `${
+                    c.totalTasks > 0
+                        ? (c.completedTasks.length / c.totalTasks) * 100
+                        : 0
+                    }%`,
+                  }}
+                ></div>
+              </div>
+              <p className="text-sm text-gray-500">
+              {c.totalTasks > 0
+              ? `${((c.completedTasks.length / c.totalTasks) * 100).toFixed(1)}%`
+                : "0%"}
+              </p>
+
               <div className="w-full bg-gray-300 rounded h-4">
                 <div
                   className="bg-green-500 h-4 rounded"

@@ -84,7 +84,7 @@ export default function Dashboard() {
                 alert("⛔ Ushbu kurs Premium foydalanuvchilar uchun!");
                 return;
               }
-              router.push(`/course/${course._id}`);
+              router.push(`/course/${course._id}/details`);
             }}
           >
             <h3 className="text-xl font-bold">

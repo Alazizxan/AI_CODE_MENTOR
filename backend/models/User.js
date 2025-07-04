@@ -19,6 +19,13 @@ const userSchema = new mongoose.Schema({
     },
   ],
   premium: { type: Boolean, default: false },
+  watchedLessons: [
+    {
+      courseId: { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+      lessonIndex: Number, // Qaysi video ko‘rilgani
+    },
+  ],
+
 });
 
 module.exports = mongoose.model("User", userSchema);
