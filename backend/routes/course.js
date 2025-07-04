@@ -5,7 +5,7 @@ const Course = require("../models/Course");
 const { aiEvaluateCode } = require("../utils/aiEvaluator");
 const authMiddleware = require("../middleware/auth");
 
-// 📚 1. Kurslar ro'yxatini olish
+// 📚 Kurslar ro'yxatini olish
 router.get("/list", async (req, res) => {
   try {
     const courses = await Course.find();
@@ -16,7 +16,7 @@ router.get("/list", async (req, res) => {
   }
 });
 
-// 🆕 2. Kurs yaratish (Admin uchun)
+// 🆕 Kurs yaratish
 router.post("/create", authMiddleware, async (req, res) => {
   try {
     const { title, description, level, tasks } = req.body;
@@ -29,7 +29,7 @@ router.post("/create", authMiddleware, async (req, res) => {
   }
 });
 
-// 📝 3. Kursni tahrirlash
+// 📝 Kursni tahrirlash
 router.put("/update/:id", authMiddleware, async (req, res) => {
   try {
     const { title, description, level, tasks } = req.body;
@@ -46,7 +46,7 @@ router.put("/update/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// 🗑️ 4. Kursni o'chirish
+// 🗑️ Kursni o'chirish
 router.delete("/delete/:id", authMiddleware, async (req, res) => {
   try {
     const course = await Course.findByIdAndDelete(req.params.id);
@@ -58,7 +58,7 @@ router.delete("/delete/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// 🧠 5. Kod yuborish va baholash
+// 🧠 Kod yuborish va baholash
 router.post("/submit/:courseId/:taskIndex", authMiddleware, async (req, res) => {
   const userId = req.user.id;
   const { code } = req.body;
@@ -77,29 +77,25 @@ router.post("/submit/:courseId/:taskIndex", authMiddleware, async (req, res) => 
     if (result.passed) {
       const user = await User.findById(userId);
 
-      // Agar foydalanuvchi vazifani tugatmagan bo‘lsa
+      // ✅ Agar vazifa oldin bajarilmagan bo‘lsa
       const alreadyCompleted = user.completedTasks.some(
-        (t) =>
-          t.courseId.toString() === courseId &&
-          t.taskIndex === parseInt(taskIndex)
+        (t) => t.courseId == courseId && t.taskIndex == taskIndex
       );
 
       if (!alreadyCompleted) {
-        user.completedTasks.push({
-          courseId,
-          taskIndex: parseInt(taskIndex),
-        });
-        user.points += 10;
+        user.completedTasks.push({ courseId, taskIndex }); // Vazifani yozib qo‘y
+        user.points += 10; // 🏆 Ball berish
 
-        // Agar barcha vazifalar tugagan bo‘lsa level oshadi
-        const totalTasks = course.tasks.length;
-        const completedInCourse = user.completedTasks.filter(
-          (t) => t.courseId.toString() === courseId
-        ).length;
+        // 🚀 Kursni boshlagan foydalanuvchi sifatida yozamiz
+        if (taskIndex === 0 && !user.courses.includes(courseId)) {
+          user.courses.push(courseId);
+        }
 
-        if (completedInCourse === totalTasks) {
+        // 🌟 Agar barcha vazifalar tugasa level oshadi
+        if (taskIndex + 1 === course.tasks.length) {
           user.level += 1;
         }
+
         await user.save();
       }
     }
