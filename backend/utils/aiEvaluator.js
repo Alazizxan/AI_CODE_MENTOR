@@ -1,14 +1,16 @@
-function aiEvaluator(code, level) {
-  if (level == 1 && code.includes("Hello World")) {
-    return { correct: true, feedback: "✅ Zo‘r! Hello World to‘g‘ri yozildi." };
+async function aiEvaluateCode(code, level) {
+  // Bu oddiy tekshiruvchi: kod ichida "print" so‘zi bo‘lsa o'tkazadi
+  if (code.includes("print")) {
+    return {
+      passed: true,
+      feedback: `✅ Kod to'g'ri. 🎉 ${level + 1}-bosqichga o'tdingiz.`,
+    };
+  } else {
+    return {
+      passed: false,
+      feedback: "❌ Kod noto'g'ri. Iltimos, qayta urinib ko'ring.",
+    };
   }
-  if (level == 2 && code.includes("if")) {
-    return { correct: true, feedback: "✅ If-Else bloklari to‘g‘ri ishlayapti." };
-  }
-  if (level == 3 && code.includes("for")) {
-    return { correct: true, feedback: "✅ For loop to‘g‘ri ishlayapti." };
-  }
-  return { correct: false, feedback: "❌ Kodni tekshirib ko‘ring." };
 }
 
-module.exports = aiEvaluator;
+module.exports = { aiEvaluateCode };

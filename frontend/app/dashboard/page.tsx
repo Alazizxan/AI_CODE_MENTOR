@@ -1,39 +1,47 @@
 "use client";
+
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 
-export default function DashboardPage() {
+export default function Dashboard() {
+  const [user, setUser] = useState<any>(null);
   const [courses, setCourses] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get("http://localhost:5000/api/course/list", {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setCourses(res.data.courses);
-      } catch (err) {
-        alert("Xatolik: Kurslar olinmadi");
-        router.push("/login");
-      }
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return router.push("/login");
+
+      const userRes = await fetch("http://localhost:5000/api/auth/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const userData = await userRes.json();
+      setUser(userData);
+
+      const coursesRes = await fetch("http://localhost:5000/api/course/list", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const coursesData = await coursesRes.json();
+      setCourses(coursesData);
     };
-    fetchCourses();
+    fetchData();
   }, []);
 
+  if (!user) return <p>Loading...</p>;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-200 to-purple-300 p-8">
-      <h1 className="text-3xl font-bold mb-6 text-center">Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div className="p-6">
+      <h1 className="text-3xl font-bold">👋 Welcome, {user.username}</h1>
+      <p className="mt-2">Level: {user.level} | Points: {user.points}</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
         {courses.map((course) => (
           <div
-            key={course.level}
-            className="bg-white p-4 rounded shadow hover:scale-105 transition"
-            onClick={() => router.push(`/course/${course.level}`)}
+            key={course._id}
+            className="p-4 border rounded cursor-pointer bg-green-200 hover:bg-green-300"
+            onClick={() => router.push(`/course/${course._id}`)}
           >
-            <h2 className="text-xl font-semibold">{course.title}</h2>
+            <h2 className="text-xl font-bold">{course.title}</h2>
             <p>{course.description}</p>
           </div>
         ))}
