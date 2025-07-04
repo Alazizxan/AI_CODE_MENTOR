@@ -18,6 +18,24 @@ router.get("/leaderboard", async (req, res) => {
   }
 });
 
+
+router.put("/premium/:id", authMiddleware, async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: "Foydalanuvchi topilmadi" });
+
+    user.premium = true;
+    await user.save();
+
+    res.json({ message: "✅ Premiumga o‘tkazildi", user });
+  } catch (err) {
+    console.error("❌ Premiumga o‘tkazishda xatolik:", err);
+    res.status(500).json({ error: "Server xatoligi" });
+  }
+});
+
+
+
 // 🧑‍🎓 Foydalanuvchi ma'lumotlari
 router.get("/me", authMiddleware, async (req, res) => {
   try {
