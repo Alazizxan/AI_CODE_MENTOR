@@ -1,15 +1,17 @@
+const axios = require("axios");
+
 async function aiEvaluateCode(code, level) {
-  // Bu oddiy tekshiruvchi: kod ichida "print" so‘zi bo‘lsa o'tkazadi
-  if (code.includes("print")) {
-    return {
-      passed: true,
-      feedback: `✅ Kod to'g'ri. 🎉 ${level + 1}-bosqichga o'tdingiz.`,
-    };
-  } else {
-    return {
-      passed: false,
-      feedback: "❌ Kod noto'g'ri. Iltimos, qayta urinib ko'ring.",
-    };
+  try {
+    const res = await axios.post("http://localhost:5001/ai/evaluate", {
+      code,
+      level
+    });
+
+    const msg = res.data.feedback;
+    return { passed: msg.includes("✅"), feedback: msg };
+  } catch (e) {
+    console.error("❌ GPT4All bilan xato:", e.message);
+    return { passed: false, feedback: "⚠️ AI bilan bog‘lanishda xatolik yuz berdi." };
   }
 }
 
