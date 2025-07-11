@@ -2,16 +2,26 @@ const axios = require("axios");
 
 async function aiEvaluateCode(code, level) {
   try {
-    const res = await axios.post("http://localhost:5001/ai/evaluate", {
+    const res = await axios.post("http://localhost:8000/ai/evaluate", {
       code,
       level
+    }, {
+      timeout: 10000
     });
 
-    const msg = res.data.feedback;
-    return { passed: msg.includes("✅"), feedback: msg };
+    return {
+      passed: res.data.passed,
+      feedback: res.data.feedback,
+      nextLevel: res.data.next_level || level
+    };
+    
   } catch (e) {
-    console.error("❌ GPT4All bilan xato:", e.message);
-    return { passed: false, feedback: "⚠️ AI bilan bog‘lanishda xatolik yuz berdi." };
+    console.error("AI baholash xatosi:", e.message);
+    return {
+      passed: false,
+      feedback: "AI bilan aloqa xatosi",
+      nextLevel: level
+    };
   }
 }
 
