@@ -63,14 +63,54 @@ export default function DashboardPage() {
     fetchUser();
   }, []);
 
-  if (loading) return <p className="p-4">Loading dashboard...</p>;
-  if (!user) return <p className="p-4 text-red-600">Foydalanuvchi topilmadi</p>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 relative">
+            <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
+          </div>
+          <p className="text-slate-300">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
-  // 🏆 Level aniqlash
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <p className="text-red-400">Foydalanuvchi topilmadi</p>
+      </div>
+    );
+  }
+
+  // Level aniqlash
   const levelTitle =
     user.level < 5 ? "👶 Beginner" : user.level < 10 ? "💻 Intermediate" : "🚀 Expert";
 
-  // 📊 Kurs progress barlar uchun data
+  // Chart configurations with dark theme
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        labels: {
+          color: '#e2e8f0'
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#94a3b8' },
+        grid: { color: '#334155' }
+      },
+      y: {
+        ticks: { color: '#94a3b8' },
+        grid: { color: '#334155' }
+      }
+    }
+  };
+
+  // Kurs progress barlar uchun data
   const barData = {
     labels: user.courses.map((c: any) => c.title),
     datasets: [
@@ -79,34 +119,35 @@ export default function DashboardPage() {
         data: user.courses.map(
           (c: any) => (c.completedTasks.length / c.totalTasks) * 100
         ),
-        backgroundColor: "rgba(54, 162, 235, 0.7)",
-        borderColor: "rgba(54, 162, 235, 1)",
+        backgroundColor: "rgba(59, 130, 246, 0.8)",
+        borderColor: "rgba(59, 130, 246, 1)",
         borderWidth: 1,
       },
     ],
   };
 
-  // 🍩 Ballar distribution uchun data
+  // Ballar distribution uchun data
   const doughnutData = {
     labels: ["Completed Points", "Remaining Points"],
     datasets: [
       {
         data: [user.points, 1000 - user.points],
-        backgroundColor: ["#36A2EB", "#E5E5E5"],
-        hoverBackgroundColor: ["#36A2EB", "#CCCCCC"],
+        backgroundColor: ["#3b82f6", "#1e293b"],
+        borderColor: ["#60a5fa", "#334155"],
+        borderWidth: 2,
       },
     ],
   };
 
-  // 📈 Kunlik ball progress (mock data)
+  // Kunlik ball progress (mock data)
   const lineData = {
     labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     datasets: [
       {
         label: "Daily Points",
         data: [5, 10, 15, 20, 30, 40, user.points],
-        borderColor: "#4ADE80",
-        backgroundColor: "rgba(74, 222, 128, 0.2)",
+        borderColor: "#10b981",
+        backgroundColor: "rgba(16, 185, 129, 0.1)",
         tension: 0.3,
         fill: true,
       },
@@ -114,108 +155,162 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="p-6 space-y-8">
-      <h1 className="text-3xl font-bold">👋 Welcome, {user.username}</h1>
-      <div className="flex flex-col md:flex-row justify-between gap-4">
-        <div className="flex-1 bg-blue-50 p-4 rounded shadow">
-          <p className="text-lg">
-            🏆 Level: <b>{user.level}</b> ({levelTitle})
-          </p>
-          <p className="text-lg">⭐ Points: <b>{user.points}</b></p>
-        </div>
-        <div className="flex-1 bg-green-50 p-4 rounded shadow">
-          <h2 className="text-xl font-semibold mb-2">🎯 Progress Overview</h2>
-          <Doughnut data={doughnutData} />
-        </div>
-      </div>
-
-      {/* 📚 Kurs Progress bar */}
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">📚 Kurslar Progress</h2>
-        {user.courses.map((c: any) => {
-          const percent =
-            c.totalTasks > 0
-              ? (c.completedTasks / c.totalTasks) * 100
-              : 0;
-          const badge =
-            percent < 25
-              ? "🔥 Beginner"
-              : percent < 75
-              ? "💻 Intermediate"
-              : "🚀 Expert";
-
-          return (
-            <div
-              key={c._id}
-              className="mb-4 bg-gray-50 p-3 rounded hover:bg-gray-100 transition"
-            >
-              <div className="flex justify-between items-center mb-1">
-                <p className="font-medium">
-                  {c.title}{" "}
-                  <span className="text-sm text-gray-600">
-                    ({percent.toFixed(1)}%)
-                  </span>
-                </p>
-                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                  {badge}
-                </span>
+    <div className="min-h-screen bg-slate-900">
+      {/* Navigation */}
+      <nav className="bg-slate-800/80 backdrop-blur-sm border-b border-slate-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">🛡️</span>
               </div>
-              <div className="w-full bg-gray-300 rounded h-4">
-              <div
-                className="bg-green-500 h-4 rounded"
-                style={{
-                  width: `${
-                    c.totalTasks > 0
-                        ? (c.completedTasks.length / c.totalTasks) * 100
-                        : 0
-                    }%`,
-                  }}
-                ></div>
-              </div>
-              <p className="text-sm text-gray-500">
-              {c.totalTasks > 0
-              ? `${((c.completedTasks.length / c.totalTasks) * 100).toFixed(1)}%`
-                : "0%"}
-              </p>
-
-              <div className="w-full bg-gray-300 rounded h-4">
-                <div
-                  className="bg-green-500 h-4 rounded"
-                  style={{ width: `${percent}%` }}
-                ></div>
-              </div>
+              <h1 className="text-xl font-bold text-white">CyberLearn Dashboard</h1>
+            </div>
+            
+            <div className="flex items-center space-x-4">
               <button
-                onClick={() => router.push(`/course/${c._id}`)}
-                className="mt-2 px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                onClick={() => router.push("/")}
+                className="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                ▶ Continue Course
+                🏠 Home
+              </button>
+              <button
+                onClick={() => router.push("/leaderboard")}
+                className="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                🏆 Leaderboard
+              </button>
+              <button
+                onClick={() => router.push("/account")}
+                className="text-slate-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              >
+                👤 Account
               </button>
             </div>
-          );
-        })}
-      </div>
+          </div>
+        </div>
+      </nav>
 
-      {/* 📈 Line Chart */}
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">📈 Daily Progress</h2>
-        <Line data={lineData} />
-      </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Welcome Header */}
+        <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-xl p-6 mb-8 border border-slate-600">
+          <h1 className="text-3xl font-bold text-white mb-2">👋 Welcome, {user.username}</h1>
+          <p className="text-slate-300">Here's your learning progress overview</p>
+        </div>
 
-      {/* 🏅 Top Users */}
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">🏅 Top Users</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {user.topUsers.map((u: any, i: number) => (
-            <div
-              key={i}
-              className="bg-gray-50 p-3 rounded shadow hover:bg-gray-100"
-            >
-              <p className="font-semibold">
-                {i + 1}. {u.username}
-              </p>
-              <p className="text-sm text-gray-600">⭐ {u.points} points</p>
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">Your Stats</h2>
+              <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                <span className="text-blue-400 text-lg">📊</span>
+              </div>
             </div>
-          ))}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-slate-300">Level:</span>
+                <span className="text-blue-400 font-bold">{user.level} ({levelTitle})</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-slate-300">Points:</span>
+                <span className="text-green-400 font-bold">{user.points}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-white">Progress Overview</h2>
+              <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                <span className="text-purple-400 text-lg">🎯</span>
+              </div>
+            </div>
+            <div className="h-48">
+              <Doughnut data={doughnutData} options={chartOptions} />
+            </div>
+          </div>
+        </div>
+
+        {/* Course Progress */}
+        <div className="bg-slate-800 rounded-xl p-6 mb-8 border border-slate-700">
+          <h2 className="text-xl font-semibold text-white mb-6">📚 Course Progress</h2>
+          <div className="space-y-4">
+            {user.courses.map((c: any) => {
+              const percent = c.totalTasks > 0 ? (c.completedTasks / c.totalTasks) * 100 : 0;
+              const badge = percent < 25 ? "🔥 Beginner" : percent < 75 ? "💻 Intermediate" : "🚀 Expert";
+
+              return (
+                <div key={c._id} className="bg-slate-700 rounded-lg p-4 hover:bg-slate-600 transition-colors">
+                  <div className="flex justify-between items-center mb-2">
+                    <h3 className="font-medium text-white">{c.title}</h3>
+                    <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                      {badge}
+                    </span>
+                  </div>
+                  <div className="w-full bg-slate-600 rounded-full h-3 mb-2">
+                    <div
+                      className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full transition-all duration-500"
+                      style={{ width: `${percent}%` }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-slate-400">
+                      {c.completedTasks.length}/{c.totalTasks} tasks completed
+                    </span>
+                    <button
+                      onClick={() => router.push(`/course/${c._id}`)}
+                      className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded transition-colors"
+                    >
+                      Continue →
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+            <h2 className="text-xl font-semibold text-white mb-4">📈 Daily Progress</h2>
+            <div className="h-64">
+              <Line data={lineData} options={chartOptions} />
+            </div>
+          </div>
+
+          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+            <h2 className="text-xl font-semibold text-white mb-4">📊 Course Performance</h2>
+            <div className="h-64">
+              <Bar data={barData} options={chartOptions} />
+            </div>
+          </div>
+        </div>
+
+        {/* Top Users */}
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h2 className="text-xl font-semibold text-white mb-6">🏅 Top Performers</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {user.topUsers.map((u: any, i: number) => (
+              <div key={i} className="bg-slate-700 rounded-lg p-4 hover:bg-slate-600 transition-colors">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                    i === 0 ? 'bg-yellow-500 text-yellow-900' :
+                    i === 1 ? 'bg-gray-400 text-gray-900' :
+                    i === 2 ? 'bg-orange-600 text-orange-100' :
+                    'bg-slate-600 text-slate-300'
+                  }`}>
+                    {i + 1}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">{u.username}</p>
+                    <p className="text-sm text-slate-400">⭐ {u.points} points</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
