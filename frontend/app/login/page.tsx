@@ -36,21 +36,21 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-sm">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
-            <span className="text-white text-2xl">🛡️</span>
+        <div className="text-center mb-6">
+          <div className="w-12 h-12 mx-auto bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mb-3">
+            <span className="text-white text-lg">🛡️</span>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-          <p className="text-slate-400">Sign in to continue your cybersecurity journey</p>
+          <h1 className="text-2xl font-bold text-white mb-1">Welcome Back</h1>
+          <p className="text-slate-400 text-sm">Sign in to continue learning</p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-slate-800 rounded-xl p-8 border border-slate-700">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="bg-slate-800 rounded-lg p-5 border border-slate-700">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-300 mb-1.5">
                 Email Address
               </label>
               <input
@@ -58,13 +58,13 @@ export default function Login() {
                 placeholder="Enter your email"
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
                 required
               />
             </div>
             
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-slate-300 mb-1.5">
                 Password
               </label>
               <input
@@ -72,13 +72,13 @@ export default function Login() {
                 placeholder="Enter your password"
                 value={form.password}
                 onChange={(e) => setForm({ ...form, password: e.target.value })}
-                className="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                className="w-full px-3 py-2.5 bg-slate-700 border border-slate-600 rounded-md text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
                 required
               />
             </div>
             
             {error && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+              <div className="bg-red-500/10 border border-red-500/20 rounded-md p-2.5">
                 <p className="text-red-400 text-sm">{error}</p>
               </div>
             )}
@@ -86,11 +86,11 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white py-3 rounded-lg font-semibold transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2.5 rounded-md font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 text-sm"
             >
               {loading ? (
                 <div className="flex items-center justify-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                   <span>Signing in...</span>
                 </div>
               ) : (
@@ -99,7 +99,7 @@ export default function Login() {
             </button>
           </form>
           
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
             <p className="text-slate-400 text-sm">
               Don't have an account?{" "}
               <button
